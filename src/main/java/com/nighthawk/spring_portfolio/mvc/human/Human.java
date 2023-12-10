@@ -1,4 +1,4 @@
-package com.nighthawk.spring_portfolio.mvc.person;
+package com.nighthawk.spring_portfolio.mvc.human;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -16,14 +16,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Convert;
 import static jakarta.persistence.FetchType.EAGER;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.hibernate.annotations.Type;
+import jakarta.persistence.Convert;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
@@ -44,8 +43,8 @@ The last annotation connect to database
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Convert(attributeName ="person", converter = JsonType.class)
-public class Person {
+@Convert(attributeName ="json", converter = JsonType.class)
+public class Human {
 
     // automatic unique identifier for Person record
     @Id
@@ -70,10 +69,10 @@ public class Person {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dob;
 
-    // To be implemented
-    @ManyToMany(fetch = EAGER)
-    private Collection<PersonRole> roles = new ArrayList<>();
+    private String classCode;
 
+    @NonNull
+    private String role;
     /* HashMap is used to store JSON for daily "stats"
     "stats": {
         "2022-11-13": {
@@ -82,17 +81,16 @@ public class Person {
         }
     }
     */
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    private Map<String,Map<String, Object>> stats = new HashMap<>(); 
     
 
     // Constructor used when building object from an API
-    public Person(String email, String password, String name, Date dob) {
+    public Human(String email, String password, String name, Date dob, String role) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.dob = dob;
+        this.role = role;
+        
     }
 
     // A custom getter to return age from dob attribute
@@ -104,13 +102,14 @@ public class Person {
     }
 
     // Initialize static test data 
-    public static Person[] init() {
+    public static Human[] init() {
 
         // basics of class construction
-        Person p1 = new Person();
+        Human p1 = new Human();
         p1.setName("Thomas Edison");
         p1.setEmail("toby@gmail.com");
         p1.setPassword("123Toby!");
+        p1.setRole("Teacher");
         // adding Note to notes collection
         try {  // All data that converts formats could fail
             Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1840");
@@ -119,67 +118,61 @@ public class Person {
             // no actions as dob default is good enough
         }
 
-        Person p2 = new Person();
+        Human p2 = new Human();
         p2.setName("Alexander Graham Bell");
         p2.setEmail("lexb@gmail.com");
         p2.setPassword("123LexB!");
+        p2.setRole("Teacher");
         try {
             Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1845");
             p2.setDob(d);
         } catch (Exception e) {
         }
 
-        Person p3 = new Person();
+        Human p3 = new Human();
         p3.setName("Nikola Tesla");
         p3.setEmail("niko@gmail.com");
         p3.setPassword("123Niko!");
+        p3.setRole("Student");
         try {
             Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1850");
             p3.setDob(d);
         } catch (Exception e) {
         }
 
-        Person p4 = new Person();
+        Human p4 = new Human();
         p4.setName("Madam Currie");
         p4.setEmail("madam@gmail.com");
         p4.setPassword("123Madam!");
+        p4.setRole("Student");
         try {
             Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1860");
             p4.setDob(d);
         } catch (Exception e) {
         }
 
-        Person p5 = new Person();
+        Human p5 = new Human();
         p5.setName("John Mortensen");
         p5.setEmail("jm1021@gmail.com");
         p5.setPassword("123Qwerty!");
+        p5.setRole("Student");
         try {
             Date d = new SimpleDateFormat("MM-dd-yyyy").parse("10-21-1959");
             p5.setDob(d);
         } catch (Exception e) {
         }
 
-        Person p6 = new Person();
-        p6.setName("admin");
-        p6.setEmail("admin@gmail.com");
-        p6.setPassword("admin@123");
-        try {
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("10-21-1959");
-            p6.setDob(d);
-        } catch (Exception e) {
-        }
-
         // Array definition and data initialization
-        Person persons[] = {p1, p2, p3, p4, p5, p6};
+        Human persons[] = {p1, p2, p3, p4, p5};
         return(persons);
     }
 
     public static void main(String[] args) {
         // obtain Person from initializer
-        Person persons[] = init();
+        Human persons[] = init();
 
         // iterate using "enhanced for loop"
-        for( Person person : persons) {
+        for( Human person : persons) {
             System.out.println(person);  // print object
         }
     }

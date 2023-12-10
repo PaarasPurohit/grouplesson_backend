@@ -1,5 +1,4 @@
-package com.nighthawk.spring_portfolio.mvc.person;
-
+package com.nighthawk.spring_portfolio.mvc.human;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,18 +8,16 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
 
-// Built using article: https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/mvc.html
-// or similar: https://asbnotebook.com/2020/04/11/spring-boot-thymeleaf-form-validation-example/
 @Controller
-@RequestMapping("/mvc/human")
-public class PersonViewController {
+@RequestMapping("/mvc/person")
+public class HumanViewController {
     // Autowired enables Control to connect HTML and POJO Object to database easily for CRUD
     @Autowired
-    private PersonDetailsService repository;
+    private HumanDetailsService repository;
 
     @GetMapping("/read")
     public String person(Model model) {
-        List<Person> list = repository.listAll();
+        List<Human> list = repository.listAll();
         model.addAttribute("list", list);
         return "person/read";
     }
@@ -30,7 +27,7 @@ public class PersonViewController {
         @param - Person Class
     */
     @GetMapping("/create")
-    public String personAdd(Person person) {
+    public String personAdd(Human person) {
         return "person/create";
     }
 
@@ -39,25 +36,12 @@ public class PersonViewController {
     @param - BindingResult object
      */
     @PostMapping("/create")
-    public String personSave(@Valid Person person, BindingResult bindingResult) {
+    public String personSave(@Valid Human person, BindingResult bindingResult) {
         // Validation of Decorated PersonForm attributes
         if (bindingResult.hasErrors()) {
             return "person/create";
         }
         repository.save(person);
-        repository.addRoleToPerson(person.getEmail(), "ROLE_STUDENT");
-        // Redirect to next step
-        return "redirect:/mvc/person/read";
-    }
-
-    @PostMapping("/admin")
-    public String adminSave(@Valid Person person, BindingResult bindingResult) {
-        // Validation of Decorated PersonForm attributes
-        if (bindingResult.hasErrors()) {
-            return "person/create";
-        }
-        repository.save(person);
-        repository.addRoleToPerson(person.getEmail(), "Admin");
         // Redirect to next step
         return "redirect:/mvc/person/read";
     }
@@ -69,20 +53,18 @@ public class PersonViewController {
     }
 
     @PostMapping("/update")
-    public String personUpdateSave(@Valid Person person, BindingResult bindingResult) {
+    public String personUpdateSave(@Valid Human person, BindingResult bindingResult) {
         // Validation of Decorated PersonForm attributes
         if (bindingResult.hasErrors()) {
             return "person/update";
         }
         repository.save(person);
-        repository.addRoleToPerson(person.getEmail(), "ROLE_STUDENT");
-
         // Redirect to next step
         return "redirect:/mvc/person/read";
     }
 
     @GetMapping("/delete/{id}")
-    public String personDelete(@PathVariable("id") long id) {
+    public String humanDelete(@PathVariable long id) {
         repository.delete(id);
         return "redirect:/mvc/person/read";
     }

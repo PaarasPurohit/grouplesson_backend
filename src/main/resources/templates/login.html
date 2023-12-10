@@ -36,7 +36,7 @@
                 var email = document.getElementById('username').value;
                 var password = document.getElementById('password').value;
                 var data = {email:email, password:password};
-                fetch("/authenticate", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}).then((data) => {
+                fetch("/human/authenticate", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}).then((data) => {
                     if (data.status == 200) {
                         window.location.replace("/mvc/person/read");
                     } else {

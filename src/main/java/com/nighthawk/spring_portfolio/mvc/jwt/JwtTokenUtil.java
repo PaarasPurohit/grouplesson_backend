@@ -1,17 +1,23 @@
 package com.nighthawk.spring_portfolio.mvc.jwt;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Base64;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.util.Collection;
 import io.jsonwebtoken.security.Keys;
-import javax.crypto.*;
-
 
 @Component
 public class JwtTokenUtil {
@@ -55,6 +61,14 @@ public class JwtTokenUtil {
 	//generate token for user
 	public String generateToken(UserDetails userDetails) {
 		Map<String, Object> claims = new HashMap<>();
+    	Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+		ArrayList<String> roles = new ArrayList<>();
+		
+		for (GrantedAuthority authority : authorities) {
+			roles.add(authority.getAuthority());
+		}
+
+		claims.put("roles", roles);
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
 

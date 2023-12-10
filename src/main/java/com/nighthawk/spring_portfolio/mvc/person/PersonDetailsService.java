@@ -40,6 +40,7 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         person.getRoles().forEach(role -> { //loop through roles
+            System.out.println(role);
             authorities.add(new SimpleGrantedAuthority(role.getName())); //create a SimpleGrantedAuthority by passed in role, adding it all to the authorities list, list of roles gets past in for spring security
         });
         // train spring security to User and Authorities
@@ -134,6 +135,15 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
                 }
                 if (addRole) person.getRoles().add(role);   // everything is valid for adding role
             }
+            else{
+                PersonRole newRole = new PersonRole(roleName);
+                saveRole(newRole);
+                person.getRoles().add(newRole);
+                System.out.println("MAybe");
+            }
+        }
+        else{
+            System.out.println("Wrong1");
         }
     }
     
